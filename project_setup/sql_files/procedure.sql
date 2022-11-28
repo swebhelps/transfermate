@@ -7,6 +7,8 @@ BEGIN
     DEALLOCATE PREPARE STMT;
 END$$
 
+
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAuthorDetailsByName` (IN `author_name_str` LONGTEXT)  NO SQL
 BEGIN
     SET @author_name_str = author_name_str;
