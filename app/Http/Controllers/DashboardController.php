@@ -57,13 +57,13 @@ class DashboardController extends Controller
                         {
                             //update author-book table
                             //update isnot neccesarry but becz given in document so we are updating
-                            $book_id = $book_check_exists->book_id;
+                            $author_id = $book_check_exists->author_id;
                             if(is_array($book_name))
                             {
                                $book_name=NULL;
                             }
 
-                            Book::where('book_id',$book_id)->update(['book_name'=>$book_name]);
+                            Book::where('author_id',$author_id)->update(['book_name'=>$book_name]);
                             $flag_insert=3;
 
                         }else
@@ -81,13 +81,8 @@ class DashboardController extends Controller
                             }
                             $row1 = new Book;
                             $row1->book_name = $book_name;
+                            $row1->author_id=$row->id;
                             $row1->save();
-
-                            //insert to Author Book table
-                            $row2 = new Authorbook;
-                            $row2->book_id = $row1->id;
-                            $row2->author_id=$row->id;
-                            $row2->save();
                             $flag_insert=2;
 
                         }
@@ -130,7 +125,6 @@ class DashboardController extends Controller
             $enable_table=1;
             $procedure = "getAuthorDetails()";
             $book_list = self::callMasterProcedure($procedure);
-            //$book_list =  Author::leftJoin('book','book.author_id','=','author.author_id')->orderBy('author.author_id', 'ASC')->get(['book.book_name','author.author_name']);
         }
         return view('searchUser', array('book_list'=>$book_list,'enable_table'=>$enable_table,'author_name'=>$author_name));
     }

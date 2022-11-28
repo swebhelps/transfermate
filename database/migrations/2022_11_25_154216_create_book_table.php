@@ -18,6 +18,7 @@ class CreateBookTable extends Migration
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_unicode_ci';
             $table->bigIncrements('book_id');
+            $table->Integer('author_id');
             $table->string('book_name', 255)->nullable();
             $table->timestamps();
         });

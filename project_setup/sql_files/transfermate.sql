@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 28, 2022 at 06:11 AM
+-- Generation Time: Nov 28, 2022 at 08:52 AM
 -- Server version: 5.7.36-log
 -- PHP Version: 7.4.27
 
@@ -27,7 +27,7 @@ DELIMITER $$
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAuthorDetails` ()  NO SQL
 BEGIN
-    SET @query =  CONCAT("SELECT * FROM book as b left join author_book as ab on ab.book_id=b.book_id left join author as a on a.author_id=ab.author_id");
+    SET @query =  CONCAT("SELECT a.author_name,b.book_name FROM `author` as a LEFT JOIN book as b on b.author_id=a.author_id  group by a.author_id");
 
     PREPARE STMT FROM @query;
     EXECUTE STMT;
@@ -37,7 +37,7 @@ END$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAuthorDetailsByName` (IN `author_name_str` LONGTEXT)  NO SQL
 BEGIN
     SET @author_name_str = author_name_str;
-    SET @query =  CONCAT("SELECT * FROM book as b left join author_book as ab on ab.book_id=b.book_id  left join author as a on a.author_id=ab.author_id  where a.author_name LIKE '%", @author_name_str,"%'");
+    SET @query =  CONCAT("SELECT a.author_name,b.book_name FROM `author` as a LEFT JOIN book as b on b.author_id=a.author_id where a.author_name LIKE '%", @author_name_str,"%' group by a.author_id");
 
     PREPARE STMT FROM @query;
     EXECUTE STMT;
@@ -64,42 +64,14 @@ CREATE TABLE `author` (
 --
 
 INSERT INTO `author` (`author_id`, `author_name`, `created_at`, `updated_at`) VALUES
-(1, '아미타브 바찬', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(2, '아미타브 바찬', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(3, 'Pavel Vejinov', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(4, 'Pavel Vejinov', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(5, 'Ivan Penev', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(6, 'Blaga Dimitrova	', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(7, 'アイザック・アシモフ', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(8, '精神', '2022-11-28 00:40:59', '2022-11-28 00:40:59');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `author_book`
---
-
-CREATE TABLE `author_book` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `book_id` int(11) NOT NULL,
-  `author_id` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `author_book`
---
-
-INSERT INTO `author_book` (`id`, `book_id`, `author_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(2, 2, 2, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(3, 3, 3, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(4, 4, 4, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(5, 5, 5, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(6, 6, 6, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(7, 7, 7, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(8, 8, 8, '2022-11-28 00:40:59', '2022-11-28 00:40:59');
+(1, '아미타브 바찬', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(2, '아미타브 바찬브', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(3, 'Pavel Vejinov', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(4, 'Pavel Vejinov', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(5, 'Ivan Penev', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(6, 'Blaga Dimitrova	', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(7, 'アイザック・アシモフ', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(8, '精神', '2022-11-28 03:21:12', '2022-11-28 03:21:12');
 
 -- --------------------------------------------------------
 
@@ -109,6 +81,7 @@ INSERT INTO `author_book` (`id`, `book_id`, `author_id`, `created_at`, `updated_
 
 CREATE TABLE `book` (
   `book_id` bigint(20) UNSIGNED NOT NULL,
+  `author_id` int(11) NOT NULL,
   `book_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -118,15 +91,15 @@ CREATE TABLE `book` (
 -- Dumping data for table `book`
 --
 
-INSERT INTO `book` (`book_id`, `book_name`, `created_at`, `updated_at`) VALUES
-(1, '수학', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(2, '과학', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(3, 'Book 1', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(4, 'Book 2', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(5, NULL, '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(6, 'Book Book 1', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(7, '精神の終わり', '2022-11-28 00:40:59', '2022-11-28 00:40:59'),
-(8, '標準', '2022-11-28 00:40:59', '2022-11-28 00:40:59');
+INSERT INTO `book` (`book_id`, `author_id`, `book_name`, `created_at`, `updated_at`) VALUES
+(1, 1, '수학', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(2, 2, '과학', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(3, 3, 'Book 1', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(4, 4, 'Book 2', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(5, 5, NULL, '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(6, 6, 'Book Book 1', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(7, 7, '精神の終わり', '2022-11-28 03:21:12', '2022-11-28 03:21:12'),
+(8, 8, '標準', '2022-11-28 03:21:12', '2022-11-28 03:21:12');
 
 -- --------------------------------------------------------
 
@@ -161,13 +134,12 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(8, '2014_10_12_000000_create_users_table', 1),
-(9, '2014_10_12_100000_create_password_resets_table', 1),
-(10, '2019_08_19_000000_create_failed_jobs_table', 1),
-(11, '2019_12_14_000001_create_personal_access_tokens_table', 1),
-(12, '2022_11_25_154153_create_author_table', 1),
-(13, '2022_11_25_154216_create_book_table', 1),
-(14, '2022_11_28_051002_create_author_book_table', 1);
+(1, '2014_10_12_000000_create_users_table', 1),
+(2, '2014_10_12_100000_create_password_resets_table', 1),
+(3, '2019_08_19_000000_create_failed_jobs_table', 1),
+(4, '2019_12_14_000001_create_personal_access_tokens_table', 1),
+(5, '2022_11_25_154153_create_author_table', 1),
+(6, '2022_11_25_154216_create_book_table', 1);
 
 -- --------------------------------------------------------
 
@@ -227,12 +199,6 @@ ALTER TABLE `author`
   ADD PRIMARY KEY (`author_id`);
 
 --
--- Indexes for table `author_book`
---
-ALTER TABLE `author_book`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `book`
 --
 ALTER TABLE `book`
@@ -283,12 +249,6 @@ ALTER TABLE `author`
   MODIFY `author_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `author_book`
---
-ALTER TABLE `author_book`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
 -- AUTO_INCREMENT for table `book`
 --
 ALTER TABLE `book`
@@ -304,7 +264,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
